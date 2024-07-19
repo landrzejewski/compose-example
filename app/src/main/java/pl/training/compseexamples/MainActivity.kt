@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,17 +32,54 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 
 class MainActivity : ComponentActivity() {
+
+    val viewModel: Model by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-             // Calculator()
+            // Calculator()
+            Messages(viewModel)
         }
     }
 
+}
+
+@Composable
+fun Messages(viewModel: Model) {
+    Column(
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(onClick = { viewModel.addMessage() }) {
+            Text(
+                text = "Add",
+                fontSize = 18.sp
+            )
+        }
+       /*
+       viewModel.messages
+        .forEach {
+            Text(
+                text = it,
+                fontSize = 18.sp,
+                color = Color.Blue
+            )
+       }
+       */
+       LazyColumn {
+           items(viewModel.messages) {
+               Text(
+                   text = it,
+                   fontSize = 18.sp,
+                   color = Color.Blue
+               )
+           }
+       }
+    }
 }
 
 @Composable
@@ -98,7 +139,7 @@ fun Calculator() {
                         color = mediumGrey
                     )
                     CalculatorButton(
-                        text = "/",
+                        text = "x",
                         color = orange
                     )
                 }
@@ -121,7 +162,7 @@ fun Calculator() {
                         color = mediumGrey
                     )
                     CalculatorButton(
-                        text = "x",
+                        text = "/",
                         color = orange
                     )
                 }
@@ -220,5 +261,5 @@ fun Display(value: String) {
 @Preview(showBackground = true)
 @Composable
 fun MainActivityPreview() {
-    Calculator()
+    Messages(viewModel = Model())
 }
